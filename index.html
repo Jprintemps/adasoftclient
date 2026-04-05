@@ -256,7 +256,7 @@
 
                 // ☁️ --- SAUVEGARDE DANS GOOGLE SHEETS --- ☁️
                 const saveToCloud = debounce(() => {
-                    if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI") return; // On ne fait rien si l'URL n'est pas mise
+                    if (API_URL === "Vhttps://script.google.com/macros/s/AKfycbxrHNApsIPcjh-dyadssqx-ET29YXeAVK7HU6Zoygs2GqIqdS_cDnwWjw3rmAIwKuyg/exec") return; // On ne fait rien si l'URL n'est pas mise
                     
                     setSyncStatus('syncing');
 
@@ -327,7 +327,7 @@
 
             // ☁️ --- CHARGEMENT DEPUIS GOOGLE SHEETS (AU DÉMARRAGE) --- ☁️
             async function loadDataFromCloud() {
-                if (API_URL === "https://script.google.com/macros/s/AKfycbxrHNApsIPcjh-dyadssqx-ET29YXeAVK7HU6Zoygs2GqIqdS_cDnwWjw3rmAIwKuyg/exec" || API_URL === "") {
+                if (API_URL === "https://script.google.com/macros/s/AKfycbxrHNApsIPcjh-dyadssqx-ET29YXeAVK7HU6Zoygs2GqIqdS_cDnwWjw3rmAIwKuyg/exec" || API_URL === "https://script.google.com/macros/s/AKfycbxrHNApsIPcjh-dyadssqx-ET29YXeAVK7HU6Zoygs2GqIqdS_cDnwWjw3rmAIwKuyg/exec") {
                     setSyncStatus('error');
                     createClientDashboard("", "Client Démo 1", 12, 30);
                     return;
@@ -356,7 +356,7 @@
 
             // --- SAUVEGARDE MANUELLE GLOBALE ---
             document.getElementById('btn-save-all').addEventListener('click', () => {
-                if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI" || API_URL === "") {
+                if (API_URL === "https://script.google.com/macros/s/AKfycbxrHNApsIPcjh-dyadssqx-ET29YXeAVK7HU6Zoygs2GqIqdS_cDnwWjw3rmAIwKuyg/exec" || API_URL === "") {
                     alert("Veuillez d'abord configurer l'URL de votre API Google Apps Script au début du code.");
                     return;
                 }
