@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard CEO - Adasoft</title>
+    
+    <!-- Google Fonts: Inter pour un look SaaS très propre -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuration Tailwind personnalisée -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        app: {
+                            bg: '#0D0B0A',      // Noir chaud très profond
+                            card: '#141110',    // Gris chaud foncé pour les cartes
+                            border: '#2A2422',  // Bordures subtilement chaudes
+                            muted: '#A39995',   // Texte secondaire
+                            accent: '#E55812',  // Orange cuivré inspiré de votre logo
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Animation de chargement douce pour les cartes */
+        @keyframes fade-in-up {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-card {
+            animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-app-bg text-white min-h-screen w-full overflow-x-hidden antialiased selection:bg-app-accent selection:text-white pb-16">
+
+    <!-- Header Global -->
+    <nav class="w-full border-b border-app-border bg-app-bg/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+            <!-- Logo Adasoft (Icône vectorielle custom) -->
+            <div class="w-9 h-9 bg-gradient-to-br from-[#FF8C42] to-app-accent rounded-xl flex items-center justify-center text-white shadow-[0_0_15px_rgba(229,88,18,0.4)]">
+                <svg viewBox="0 0 100 100" class="w-5 h-5">
+                    <!-- Arche du logo -->
+                    <path d="M 22 75 C 35 20, 65 20, 78 75" stroke="currentColor" stroke-width="16" stroke-linecap="round" fill="none" />
+                    <!-- Point central -->
+                    <circle cx="50" cy="72" r="9" fill="currentColor" />
+                </svg>
+            </div>
+            <span class="text-xl font-semibold tracking-tight">Adasoft</span>
+        </div>
+        
+        <!-- Bouton Nouveau Client -->
+        <button id="btn-add-client" class="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition-colors shadow-lg active:scale-95">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Nouveau Dashboard
+        </button>
+    </nav>
+
+    <!-- Container Principal (Grille pour plusieurs clients) -->
+    <main class="w-full max-w-[1600px] mx-auto p-6 md:p-8">
+        <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Les cartes générées apparaîtront ici -->
+        </div>
+    </main>
+
+    <!-- MODÈLE CACHÉ (Template) POUR GÉNÉRER LES CARTES -->
+    <template id="card-template">
+        <!-- Carte individuelle -->
+        <article class="w-full p-8 bg-app-card rounded-[2rem] border border-app-border shadow-[0_10px_50px_rgba(0,0,0,0.5)] relative animate-card opacity-0">
+            
+            <!-- Effet de lueur subtil (mis à jour avec la nouvelle couleur) -->
+            <div class="absolute -top-20 -left-20 w-40 h-40 bg-app-accent/15 rounded-full blur-[64px] pointer-events-none"></div>
+
+            <!-- En-tête de la carte -->
+            <header class="flex justify-between items-start mb-12">
+                <div class="flex flex-col gap-1 w-full mr-4">
+                    <input type="text" value="" placeholder="NOM DU CLIENT" class="js-input-client text-app-muted text-xs font-semibold tracking-widest uppercase bg-transparent border-b border-transparent hover:border-app-border focus:border-app-accent focus:outline-none transition-colors w-full pb-1">
+                    <input type="text" value="Avril 2026" placeholder="Mois" class="text-xl font-medium tracking-tight bg-transparent border-b border-transparent hover:border-app-border focus:border-app-accent focus:outline-none transition-colors w-full pb-1">
+                </div>
+                <!-- Bouton de suppression explicite -->
+                <button class="js-btn-delete w-10 h-10 rounded-full bg-app-bg border border-app-border flex items-center justify-center shadow-inner shrink-0 transition-all text-app-muted hover:text-red-500 hover:bg-red-500/10 hover:border-red-500/50 cursor-pointer" title="Supprimer ce dashboard">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+            </header>
+
+            <!-- KPI Principal : Affiches Réalisées -->
+            <section class="mb-12">
+                <h2 class="text-app-muted text-sm font-medium mb-3">Affiches terminées</h2>
+                <div class="flex items-center gap-6">
+                    <span class="text-8xl font-bold tracking-tighter tabular-nums js-val-done">0</span>
+                    <div class="flex flex-col gap-2">
+                        <button class="js-btn-add w-10 h-10 rounded-full bg-app-card border border-app-border flex items-center justify-center text-app-muted hover:text-white hover:border-app-accent hover:bg-app-accent/10 transition-all cursor-pointer">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                        </button>
+                        <button class="js-btn-sub w-10 h-10 rounded-full bg-app-card border border-app-border flex items-center justify-center text-app-muted hover:text-white hover:border-red-500/50 hover:bg-red-500/10 transition-all cursor-pointer">
+                            <i data-lucide="minus" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Barre de Progression & Objectif -->
+            <section class="mb-10">
+                <div class="flex justify-between items-end mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-app-accent text-lg font-semibold tracking-tight js-val-percent">0%</span>
+                        <span class="text-app-muted text-sm">complété</span>
+                    </div>
+                    <div class="text-right flex items-center justify-end gap-1">
+                        <span class="text-app-muted text-sm">Objectif :</span>
+                        <input type="number" value="30" min="1" class="js-input-target w-10 bg-transparent text-white font-medium text-right border-b border-transparent hover:border-app-border focus:border-app-accent focus:outline-none transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                    </div>
+                </div>
+                
+                <div class="w-full h-2 bg-app-bg rounded-full overflow-hidden border border-app-border/50">
+                    <div class="js-progress-fill h-full bg-app-accent rounded-full w-0 transition-[width] duration-1000 ease-out relative">
+                        <div class="absolute right-0 top-0 bottom-0 w-4 bg-gradient-to-r from-transparent to-white/30"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Séparateur -->
+            <div class="h-px w-full bg-gradient-to-r from-transparent via-app-border to-transparent mb-8"></div>
+
+            <!-- Widget : Affiches Restantes -->
+            <section class="flex items-center justify-between p-5 bg-app-bg/50 rounded-2xl border border-app-border/40 backdrop-blur-sm group hover:border-app-border transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full border border-app-border bg-app-card flex items-center justify-center text-app-muted group-hover:text-white transition-colors">
+                        <i data-lucide="target" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="text-app-muted text-sm font-medium">Reste à produire</p>
+                    </div>
+                </div>
+                <span class="text-3xl font-semibold tracking-tight tabular-nums js-val-remaining">30</span>
+            </section>
+        </article>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialisation globale des icônes
+            lucide.createIcons();
+
+            const container = document.getElementById('cards-container');
+            const template = document.getElementById('card-template');
+            const btnAddClient = document.getElementById('btn-add-client');
+
+            // Fonction maîtresse pour créer un dashboard indépendant
+            function createClientDashboard(initialClientName = "", initialDone = 0, initialTarget = 30) {
+                // 1. Cloner le modèle HTML
+                const clone = template.content.cloneNode(true);
+                const card = clone.querySelector('article');
+                
+                // 2. Cibler les éléments de cette carte spécifique (grâce aux classes "js-...")
+                const inputClient = card.querySelector('.js-input-client');
+                const inputTarget = card.querySelector('.js-input-target');
+                const valDone = card.querySelector('.js-val-done');
+                const valRemaining = card.querySelector('.js-val-remaining');
+                const valPercent = card.querySelector('.js-val-percent');
+                const progressFill = card.querySelector('.js-progress-fill');
+                
+                const btnAdd = card.querySelector('.js-btn-add');
+                const btnSub = card.querySelector('.js-btn-sub');
+                const btnDelete = card.querySelector('.js-btn-delete');
+
+                // 3. Variables d'état propres à cette carte
+                let targetPosters = initialTarget;
+                let donePosters = initialDone;
+                
+                // Assigner les valeurs initiales
+                inputClient.value = initialClientName;
+                inputTarget.value = targetPosters;
+
+                // 4. Fonction de mise à jour visuelle (uniquement pour cette carte)
+                function updateUI() {
+                    const remaining = Math.max(0, targetPosters - donePosters);
+                    let percent = targetPosters > 0 ? Math.round((donePosters / targetPosters) * 100) : 0;
+                    if (percent > 100) percent = 100;
+
+                    valDone.textContent = donePosters;
+                    valRemaining.textContent = remaining;
+                    valPercent.textContent = percent + '%';
+                    progressFill.style.width = percent + '%';
+                }
+
+                // 5. Gestion des événements de cette carte
+                inputTarget.addEventListener('input', (e) => {
+                    let newVal = parseInt(e.target.value);
+                    targetPosters = (!isNaN(newVal) && newVal > 0) ? newVal : 1;
+                    updateUI();
+                });
+
+                btnAdd.addEventListener('click', () => {
+                    donePosters++;
+                    updateUI();
+                });
+
+                btnSub.addEventListener('click', () => {
+                    if (donePosters > 0) {
+                        donePosters--;
+                        updateUI();
+                    }
+                });
+
+                btnDelete.addEventListener('click', () => {
+                    // Animation de disparition douce avant suppression
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.95)';
+                    card.style.transition = 'all 0.3s ease-out';
+                    setTimeout(() => card.remove(), 300);
+                });
+
+                // 6. Ajouter la carte à la page et configurer le visuel
+                container.appendChild(clone);
+                lucide.createIcons(); // Recréer les icônes SVG pour la nouvelle carte
+                
+                // Mettre à jour l'UI avec un léger délai pour que la transition CSS de la barre fonctionne
+                setTimeout(updateUI, 50);
+
+                // Focus sur le nom du client si c'est une nouvelle carte vierge
+                if (initialClientName === "") {
+                    setTimeout(() => inputClient.focus(), 100);
+                }
+            }
+
+            // --- INITIALISATION AU DÉMARRAGE ---
+            
+            // Créer une première carte d'exemple
+            createClientDashboard("Studio Alpha", 12, 30);
+            
+            // Event listener du bouton global "Nouveau Dashboard"
+            btnAddClient.addEventListener('click', () => {
+                createClientDashboard();
+            });
+        });
+    </script>
+</body>
+</html>
