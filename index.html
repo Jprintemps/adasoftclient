@@ -49,14 +49,21 @@
 
     <!-- Header Global -->
     <nav class="w-full border-b border-app-border bg-app-bg/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 bg-gradient-to-br from-[#FF8C42] to-app-accent rounded-xl flex items-center justify-center text-white shadow-[0_0_15px_rgba(229,88,18,0.4)]">
-                <svg viewBox="0 0 100 100" class="w-5 h-5">
-                    <path d="M 22 75 C 35 20, 65 20, 78 75" stroke="currentColor" stroke-width="16" stroke-linecap="round" fill="none" />
-                    <circle cx="50" cy="72" r="9" fill="currentColor" />
+        <div class="flex items-center">
+            <!-- Tentative de chargement de l'image locale -->
+            <img src="Fichier 4.png" alt="Adasoft Logo" id="logo-img" class="h-10 object-contain" onerror="document.getElementById('logo-img').classList.add('hidden'); document.getElementById('logo-fallback').classList.remove('hidden'); document.getElementById('logo-fallback').classList.add('flex');">
+            
+            <!-- Fallback en HTML/SVG si l'image n'est pas trouvée (ex: dans l'aperçu web) -->
+            <div id="logo-fallback" class="hidden items-center gap-3">
+                <svg viewBox="0 0 100 100" class="w-9 h-9 text-[#E6E6E6]">
+                    <path d="M 22 75 C 35 20, 65 20, 78 75" stroke="currentColor" stroke-width="15" stroke-linecap="round" fill="none" />
+                    <circle cx="50" cy="72" r="8.5" fill="currentColor" />
                 </svg>
+                <div class="flex flex-col justify-center">
+                    <span class="text-[24px] font-bold tracking-tight leading-none text-[#E6E6E6] lowercase">adasoft</span>
+                    <span class="text-[10px] font-normal text-app-muted tracking-wide mt-1">Where design meets brand strategy.</span>
+                </div>
             </div>
-            <span class="text-xl font-semibold tracking-tight">Adasoft</span>
         </div>
         
         <div class="flex items-center gap-4">
@@ -156,7 +163,7 @@
         // =========================================================================
         // 🚨 ATTENTION : COLLEZ VOTRE URL MAGIQUE GOOGLE APPS SCRIPT ICI
         // =========================================================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbxrHNApsIPcjh-dyadssqx-ET29YXeAVK7HU6Zoygs2GqIqdS_cDnwWjw3rmAIwKuyg/exec"; 
+        const API_URL = "VOTRE_URL_APPLICATION_WEB_ICI"; 
         
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
@@ -189,6 +196,24 @@
                 };
             }
 
+            // Utilitaire : Convertir les dates brutes de Google Sheets en texte propre (ex: "Avril 2026")
+            function formatMonthString(val) {
+                if (!val) return "Mois";
+                // On vérifie si la valeur ressemble à un format de date ISO "2026-03-31T21:00:00.000Z"
+                if (typeof val === 'string' && val.includes('T') && val.includes('Z')) {
+                    const dateObj = new Date(val);
+                    if (!isNaN(dateObj.getTime())) {
+                        // On formate la date proprement
+                        const formatter = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' });
+                        const formatted = formatter.format(dateObj);
+                        // On met la première lettre en majuscule
+                        return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+                    }
+                }
+                // Si c'est déjà du texte normal tapé par l'utilisateur, on le retourne tel quel
+                return val;
+            }
+
             // --- FONCTION MAÎTRESSE : CRÉATION D'UNE CARTE ---
             function createClientDashboard(initialId = "", initialClientName = "", initialDone = 0, initialTarget = 30, initialMonth = "Avril 2026") {
                 const clone = template.content.cloneNode(true);
@@ -214,7 +239,7 @@
                 let donePosters = parseInt(initialDone) || 0;
                 
                 inputClient.value = initialClientName;
-                inputMonth.value = initialMonth;
+                inputMonth.value = formatMonthString(initialMonth); // Formatage de la date appliqué ici !
                 inputTarget.value = targetPosters;
 
                 function updateUI() {
@@ -230,7 +255,7 @@
 
                 // ☁️ --- SAUVEGARDE DANS GOOGLE SHEETS --- ☁️
                 const saveToCloud = debounce(() => {
-                    if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI") return; // On ne fait rien si l'URL n'est pas mise
+                    if (API_URL === "$ https://script.google.com/macros/s/AKfycbxrHNApsIPcjh-dyadssqx-ET29YXeAVK7HU6Zoygs2GqIqdS_cDnwWjw3rmAIwKuyg/exec) return; // On ne fait rien si l'URL n'est pas mise
                     
                     setSyncStatus('syncing');
 
