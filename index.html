@@ -89,6 +89,76 @@
 
     <!-- Container Principal -->
     <main class="w-full max-w-[1600px] mx-auto p-6 md:p-8">
+        
+        <!-- VUE D'ENSEMBLE GLOBALE (Nouveau Design Graphique) -->
+        <section class="mb-10 p-6 md:p-8 bg-app-card rounded-[2rem] border border-app-border shadow-[0_10px_50px_rgba(0,0,0,0.3)] relative overflow-hidden flex flex-col lg:flex-row gap-8 items-center">
+            
+            <!-- Effet lueur d'ambiance dynamique -->
+            <div class="absolute -top-32 -right-32 w-96 h-96 bg-app-accent/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+            <!-- 1. Le Graphique Circulaire (Donut Chart) -->
+            <div class="relative w-48 h-48 shrink-0 flex items-center justify-center">
+                <!-- Lueur arrière du graphique -->
+                <div class="absolute inset-0 bg-app-accent/5 rounded-full blur-xl pointer-events-none"></div>
+                <!-- SVG du Graphique -->
+                <svg class="w-full h-full transform -rotate-90 drop-shadow-[0_0_15px_rgba(229,88,18,0.4)] relative z-10" viewBox="0 0 100 100">
+                    <!-- Cercle de fond -->
+                    <circle cx="50" cy="50" r="42" fill="transparent" stroke="#2A2422" stroke-width="8" />
+                    <!-- Cercle de progression (animé en JS) -->
+                    <circle id="global-progress-circle" cx="50" cy="50" r="42" fill="transparent" stroke="#E55812" stroke-width="8" stroke-dasharray="263.89" stroke-dashoffset="263.89" class="transition-all duration-1000 ease-out" stroke-linecap="round" />
+                </svg>
+                <!-- Pourcentage au centre -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center z-20">
+                    <span class="text-4xl font-bold tracking-tighter text-white drop-shadow-md" id="global-percent">0%</span>
+                    <span class="text-[10px] text-app-muted font-semibold uppercase tracking-widest mt-1">Complété</span>
+                </div>
+            </div>
+
+            <!-- 2. La Grille des Statistiques -->
+            <div class="flex-1 w-full grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                
+                <!-- Carte: Commandes en cours -->
+                <div class="bg-app-bg/60 p-4 md:p-5 rounded-2xl border border-app-border/40 hover:border-app-border transition-colors flex flex-col justify-center">
+                    <p class="text-app-muted text-[10px] md:text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i data-lucide="layers" class="w-3.5 h-3.5 text-gray-400"></i> Commandes
+                    </p>
+                    <span class="text-2xl md:text-3xl font-bold tracking-tight text-white tabular-nums" id="global-target">0</span>
+                </div>
+
+                <!-- Carte: Déjà réalisées -->
+                <div class="bg-app-bg/60 p-4 md:p-5 rounded-2xl border border-app-border/40 hover:border-app-border transition-colors flex flex-col justify-center">
+                    <p class="text-app-muted text-[10px] md:text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-500"></i> Réalisées
+                    </p>
+                    <span class="text-2xl md:text-3xl font-bold tracking-tight text-white tabular-nums" id="global-done">0</span>
+                </div>
+
+                <!-- Carte: Reste à produire -->
+                <div class="bg-app-bg/60 p-4 md:p-5 rounded-2xl border border-app-border/40 hover:border-app-border transition-colors flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute -bottom-4 -right-4 w-16 h-16 bg-app-accent/10 rounded-full blur-xl pointer-events-none"></div>
+                    <p class="text-app-muted text-[10px] md:text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2 relative z-10">
+                        <i data-lucide="target" class="w-3.5 h-3.5 text-app-accent"></i> Restantes
+                    </p>
+                    <span class="text-2xl md:text-3xl font-bold tracking-tight text-app-accent tabular-nums relative z-10" id="global-remaining">0</span>
+                </div>
+
+                <!-- Carte: Estimation Temps -->
+                <div class="bg-app-bg/60 p-4 md:p-5 rounded-2xl border border-app-border/40 hover:border-app-border transition-colors flex flex-col justify-center">
+                    <p class="text-app-muted text-[10px] md:text-xs font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-blue-400"></i> Est. Temps
+                    </p>
+                    <div class="flex flex-col xl:flex-row xl:items-baseline gap-1 xl:gap-2">
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-2xl md:text-3xl font-bold tracking-tight text-white tabular-nums" id="global-hours">0</span>
+                            <span class="text-xs text-app-muted font-medium">h</span>
+                        </div>
+                        <span class="text-[10px] text-blue-400 font-semibold bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 whitespace-nowrap" id="global-days">≈ 0 jour</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <!-- Les cartes générées apparaîtront ici -->
         </div>
@@ -124,7 +194,7 @@
                 </div>
             </section>
 
-            <section class="mb-10">
+            <section class="mb-8">
                 <div class="flex justify-between items-end mb-3">
                     <div class="flex items-center gap-2">
                         <span class="text-app-accent text-lg font-semibold tracking-tight js-val-percent">0%</span>
@@ -143,19 +213,32 @@
                 </div>
             </section>
 
-            <div class="h-px w-full bg-gradient-to-r from-transparent via-app-border to-transparent mb-8"></div>
+            <div class="h-px w-full bg-gradient-to-r from-transparent via-app-border to-transparent mb-6"></div>
 
-            <section class="flex items-center justify-between p-5 bg-app-bg/50 rounded-2xl border border-app-border/40 backdrop-blur-sm group hover:border-app-border transition-colors">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full border border-app-border bg-app-card flex items-center justify-center text-app-muted group-hover:text-white transition-colors">
-                        <i data-lucide="target" class="w-5 h-5"></i>
+            <!-- Grille d'analyse bas de carte (Reste à faire + Prédiction) -->
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Bloc Reste à produire -->
+                <section class="p-4 bg-app-bg/50 rounded-2xl border border-app-border/40 backdrop-blur-sm flex flex-col justify-center transition-colors hover:border-app-border">
+                    <p class="text-app-muted text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                        <i data-lucide="target" class="w-3 h-3"></i> Reste à faire
+                    </p>
+                    <span class="text-2xl font-semibold tracking-tight tabular-nums js-val-remaining">30</span>
+                </section>
+
+                <!-- Bloc Analyse Prédictive -->
+                <section class="js-pred-section p-4 bg-app-bg/50 rounded-2xl border border-app-border/40 backdrop-blur-sm flex flex-col justify-center relative overflow-hidden transition-colors">
+                    <p class="text-app-muted text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                        <i data-lucide="zap" class="w-3 h-3"></i> Projection
+                        <span class="js-pred-indicator w-2 h-2 rounded-full bg-gray-600 ml-auto transition-colors"></span>
+                    </p>
+                    <div class="flex items-baseline gap-1 relative z-10">
+                        <span class="text-2xl font-semibold tracking-tight tabular-nums js-val-predicted">0</span>
+                        <span class="text-[10px] text-app-muted font-medium uppercase tracking-wider">/ mois</span>
                     </div>
-                    <div>
-                        <p class="text-app-muted text-sm font-medium">Reste à produire</p>
-                    </div>
-                </div>
-                <span class="text-3xl font-semibold tracking-tight tabular-nums js-val-remaining">30</span>
-            </section>
+                    <!-- Lueur de fond réactive -->
+                    <div class="js-pred-glow absolute -bottom-4 -right-4 w-16 h-16 rounded-full blur-[20px] pointer-events-none opacity-0 transition-opacity"></div>
+                </section>
+            </div>
         </article>
     </template>
 
@@ -197,21 +280,58 @@
                 };
             }
 
-            // Utilitaire : Convertir les dates brutes de Google Sheets en texte propre (ex: "Avril 2026")
+            // 📊 --- CALCUL DU RÉSUMÉ GLOBAL AVEC GRAPHIQUE --- 📊
+            function updateGlobalSummary() {
+                const cards = document.querySelectorAll('article');
+                let globalTarget = 0;
+                let globalDone = 0;
+
+                cards.forEach(card => {
+                    const target = parseInt(card.querySelector('.js-input-target').value) || 0;
+                    const done = parseInt(card.querySelector('.js-val-done').textContent) || 0;
+                    globalTarget += target;
+                    globalDone += done;
+                });
+
+                const globalRemaining = Math.max(0, globalTarget - globalDone);
+                const globalHours = globalRemaining; 
+                const globalDays = parseFloat((globalHours / 8).toFixed(1));
+                
+                // Calcul du pourcentage global
+                let globalPercent = 0;
+                if (globalTarget > 0) {
+                    globalPercent = Math.round((globalDone / globalTarget) * 100);
+                    if (globalPercent > 100) globalPercent = 100;
+                }
+
+                // 1. Mise à jour des textes
+                document.getElementById('global-target').textContent = globalTarget;
+                document.getElementById('global-done').textContent = globalDone;
+                document.getElementById('global-remaining').textContent = globalRemaining;
+                document.getElementById('global-hours').textContent = globalHours;
+                document.getElementById('global-percent').textContent = globalPercent + '%';
+                
+                const daysText = globalDays >= 2 ? `${globalDays} jours` : `${globalDays} jour`;
+                document.getElementById('global-days').textContent = `≈ ${daysText}`;
+
+                // 2. Animation fluide du graphique circulaire SVG
+                // La circonférence d'un cercle de rayon 42 est 2 * PI * 42 ≈ 263.89
+                const circumference = 263.89;
+                const offset = circumference - (globalPercent / 100) * circumference;
+                document.getElementById('global-progress-circle').style.strokeDashoffset = offset;
+            }
+
+            // Utilitaire : Convertir les dates brutes de Google Sheets en texte propre
             function formatMonthString(val) {
                 if (!val) return "Mois";
-                // On vérifie si la valeur ressemble à un format de date ISO "2026-03-31T21:00:00.000Z"
                 if (typeof val === 'string' && val.includes('T') && val.includes('Z')) {
                     const dateObj = new Date(val);
                     if (!isNaN(dateObj.getTime())) {
-                        // On formate la date proprement
                         const formatter = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' });
                         const formatted = formatter.format(dateObj);
-                        // On met la première lettre en majuscule
                         return formatted.charAt(0).toUpperCase() + formatted.slice(1);
                     }
                 }
-                // Si c'est déjà du texte normal tapé par l'utilisateur, on le retourne tel quel
                 return val;
             }
 
@@ -232,6 +352,12 @@
                 const valPercent = card.querySelector('.js-val-percent');
                 const progressFill = card.querySelector('.js-progress-fill');
                 
+                // Éléments de l'analyse prédictive
+                const valPredicted = card.querySelector('.js-val-predicted');
+                const predSection = card.querySelector('.js-pred-section');
+                const predIndicator = card.querySelector('.js-pred-indicator');
+                const predGlow = card.querySelector('.js-pred-glow');
+                
                 const btnAdd = card.querySelector('.js-btn-add');
                 const btnSub = card.querySelector('.js-btn-sub');
                 const btnDelete = card.querySelector('.js-btn-delete');
@@ -240,10 +366,11 @@
                 let donePosters = parseInt(initialDone) || 0;
                 
                 inputClient.value = initialClientName;
-                inputMonth.value = formatMonthString(initialMonth); // Formatage de la date appliqué ici !
+                inputMonth.value = formatMonthString(initialMonth); 
                 inputTarget.value = targetPosters;
 
                 function updateUI() {
+                    // Calculs classiques
                     const remaining = Math.max(0, targetPosters - donePosters);
                     let percent = targetPosters > 0 ? Math.round((donePosters / targetPosters) * 100) : 0;
                     if (percent > 100) percent = 100;
@@ -252,15 +379,47 @@
                     valRemaining.textContent = remaining;
                     valPercent.textContent = percent + '%';
                     progressFill.style.width = percent + '%';
+
+                    // 🧠 Calcul de l'analyse prédictive
+                    const today = new Date();
+                    const currentDay = Math.max(1, today.getDate()); // Jour actuel du mois (minimum 1 pour éviter div par zéro)
+                    const totalDays = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate(); // Nombre total de jours dans le mois en cours
+                    
+                    // On calcule la vitesse (affiches / jour) et on projette sur le mois entier
+                    const dailyVelocity = donePosters / currentDay;
+                    const projectedTotal = Math.round(dailyVelocity * totalDays);
+                    
+                    valPredicted.textContent = projectedTotal;
+
+                    // Mise à jour visuelle des indicateurs selon la performance
+                    if (donePosters === 0) {
+                        // Pas encore de données
+                        predIndicator.className = 'js-pred-indicator w-2 h-2 rounded-full bg-gray-600 ml-auto transition-colors';
+                        predSection.style.borderColor = 'rgba(42, 36, 34, 0.4)'; // Reset bordure
+                        predGlow.style.opacity = '0';
+                    } else if (projectedTotal >= targetPosters) {
+                        // Objectif potentiellement atteint / dépassé (Vert)
+                        predIndicator.className = 'js-pred-indicator w-2 h-2 rounded-full bg-green-500 ml-auto transition-colors animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]';
+                        predSection.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+                        predGlow.className = 'js-pred-glow absolute -bottom-4 -right-4 w-16 h-16 rounded-full blur-[20px] pointer-events-none opacity-20 bg-green-500 transition-opacity';
+                    } else {
+                        // Objectif potentiellement raté (Rouge)
+                        predIndicator.className = 'js-pred-indicator w-2 h-2 rounded-full bg-red-500 ml-auto transition-colors animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]';
+                        predSection.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                        predGlow.className = 'js-pred-glow absolute -bottom-4 -right-4 w-16 h-16 rounded-full blur-[20px] pointer-events-none opacity-20 bg-red-500 transition-opacity';
+                    }
+                    
+                    updateGlobalSummary(); // Mise à jour du panneau principal
                 }
 
                 // ☁️ --- SAUVEGARDE DANS GOOGLE SHEETS --- ☁️
                 const saveToCloud = debounce(() => {
-                    if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI") return; // On ne fait rien si l'URL n'est pas mise
+                    if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI") return; 
                     
                     setSyncStatus('syncing');
 
                     const dataToSend = {
+                        action: 'save',
                         id: cardId,
                         mois: inputMonth.value,
                         client: inputClient.value,
@@ -268,7 +427,6 @@
                         terminees: donePosters
                     };
 
-                    // Requête POST vers Google Apps Script
                     fetch(API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'text/plain' }, 
@@ -282,9 +440,9 @@
                         console.error("Erreur de sauvegarde :", error);
                         setSyncStatus('error');
                     });
-                }, 1000); // Attend 1 seconde après la dernière action avant de sauvegarder
+                }, 1000);
 
-                // --- GESTION DES ÉVÉNEMENTS (DÉCLENCHENT LA SAUVEGARDE) ---
+                // --- GESTION DES ÉVÉNEMENTS ---
                 inputTarget.addEventListener('input', (e) => {
                     let newVal = parseInt(e.target.value);
                     targetPosters = (!isNaN(newVal) && newVal > 0) ? newVal : 1;
@@ -310,10 +468,32 @@
                 });
 
                 btnDelete.addEventListener('click', () => {
+                    // Sécurité anti-clic accidentel
+                    if (!confirm("Voulez-vous vraiment supprimer définitivement ce dashboard ? Cette action effacera les données de Google Sheets.")) return;
+
+                    // 1. Envoi de l'ordre de suppression définitif au serveur Google Sheets
+                    if (API_URL !== "VOTRE_URL_APPLICATION_WEB_ICI" && API_URL !== "") {
+                        setSyncStatus('syncing');
+                        fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain' },
+                            body: JSON.stringify({ action: 'delete', id: cardId })
+                        })
+                        .then(() => setSyncStatus('success'))
+                        .catch(error => {
+                            console.error("Erreur de suppression :", error);
+                            setSyncStatus('error');
+                        });
+                    }
+
+                    // 2. Suppression visuelle et recalcul
                     card.style.opacity = '0';
                     card.style.transform = 'scale(0.95)';
                     card.style.transition = 'all 0.3s ease-out';
-                    setTimeout(() => card.remove(), 300);
+                    setTimeout(() => {
+                        card.remove();
+                        updateGlobalSummary(); // Recalculer le résumé après suppression
+                    }, 300);
                 });
 
                 container.appendChild(clone);
@@ -329,7 +509,7 @@
             async function loadDataFromCloud() {
                 if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI" || API_URL === "") {
                     setSyncStatus('error');
-                    createClientDashboard("", "Client Démo 1", 12, 30);
+                    updateGlobalSummary(); // Mise à jour des stats à 0
                     return;
                 }
 
@@ -338,13 +518,17 @@
                     const response = await fetch(API_URL);
                     const datas = await response.json();
                     
-                    if (datas.length === 0) {
-                        createClientDashboard();
-                    } else {
-                        datas.forEach(row => {
+                    // On filtre pour ignorer les lignes vides accidentelles de Google Sheets
+                    const validDatas = datas.filter(row => row.id && row.id.toString().trim() !== "");
+                    
+                    if (validDatas.length > 0) {
+                        validDatas.forEach(row => {
                             createClientDashboard(row.id, row.client, row.terminees, row.objectif, row.mois);
                         });
                     }
+                    
+                    // Si aucune donnée n'est trouvée, l'écran reste propre et les stats à zéro.
+                    updateGlobalSummary(); 
                     setSyncStatus('success');
 
                 } catch (error) {
@@ -365,9 +549,9 @@
                 const cards = document.querySelectorAll('article');
                 let promises = [];
 
-                // Parcourt chaque carte pour récupérer ses données actuelles depuis le HTML
                 cards.forEach(card => {
                     const dataToSend = {
+                        action: 'save',
                         id: card.dataset.id,
                         mois: card.querySelector('.js-input-month').value,
                         client: card.querySelector('.js-input-client').value,
@@ -375,7 +559,6 @@
                         terminees: parseInt(card.querySelector('.js-val-done').textContent) || 0
                     };
 
-                    // Envoi des requêtes POST pour chaque carte
                     const request = fetch(API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'text/plain' },
@@ -385,7 +568,6 @@
                     promises.push(request);
                 });
 
-                // Attend que toutes les sauvegardes soient terminées pour afficher "À jour"
                 Promise.all(promises)
                     .then(() => {
                         setSyncStatus('success');
