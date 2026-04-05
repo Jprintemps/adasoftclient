@@ -61,15 +61,21 @@
         
         <div class="flex items-center gap-4">
             <!-- Indicateur de synchronisation Cloud -->
-            <div id="sync-status" class="text-xs font-medium text-app-muted flex items-center gap-2 px-3 py-1.5 rounded-full bg-app-card border border-app-border/50">
+            <div id="sync-status" class="text-xs font-medium text-app-muted flex items-center gap-2 px-3 py-1.5 rounded-full bg-app-card border border-app-border/50 hidden md:flex">
                 <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" id="sync-dot"></div>
                 <span id="sync-text">Connexion...</span>
             </div>
 
+            <!-- Bouton Sauvegarder Manuellement -->
+            <button id="btn-save-all" class="flex items-center gap-2 bg-app-card text-white border border-app-border px-4 py-2 rounded-full text-sm font-semibold hover:bg-app-border hover:text-app-accent transition-colors shadow-lg active:scale-95">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                Enregistrer
+            </button>
+
             <!-- Bouton Nouveau Client -->
             <button id="btn-add-client" class="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition-colors shadow-lg active:scale-95">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Nouveau Dashboard
+                Nouveau
             </button>
         </div>
     </nav>
@@ -239,13 +245,11 @@
                     // Requête POST vers Google Apps Script
                     fetch(API_URL, {
                         method: 'POST',
-                        // text/plain est une astuce pour éviter les erreurs de sécurité CORS du navigateur
                         headers: { 'Content-Type': 'text/plain' }, 
                         body: JSON.stringify(dataToSend)
                     })
                     .then(response => response.json())
                     .then(data => {
-                        console.log("Sauvegarde réussie :", data);
                         setSyncStatus('success');
                     })
                     .catch(error => {
@@ -280,13 +284,10 @@
                 });
 
                 btnDelete.addEventListener('click', () => {
-                    // Supprime la carte visuellement
                     card.style.opacity = '0';
                     card.style.transform = 'scale(0.95)';
                     card.style.transition = 'all 0.3s ease-out';
                     setTimeout(() => card.remove(), 300);
-                    // Note : L'API ne gère pas encore la suppression définitive dans le Sheet. 
-                    // Il faudra supprimer la ligne manuellement dans Google Sheets.
                 });
 
                 container.appendChild(clone);
@@ -302,7 +303,6 @@
             async function loadDataFromCloud() {
                 if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI" || API_URL === "") {
                     setSyncStatus('error');
-                    // Mode Demo si l'URL n'est pas encore configurée
                     createClientDashboard("", "Client Démo 1", 12, 30);
                     return;
                 }
@@ -313,10 +313,8 @@
                     const datas = await response.json();
                     
                     if (datas.length === 0) {
-                        // Base de données vide, on crée une carte vierge
                         createClientDashboard();
                     } else {
-                        // On recrée une carte pour chaque ligne du Google Sheet
                         datas.forEach(row => {
                             createClientDashboard(row.id, row.client, row.terminees, row.objectif, row.mois);
                         });
@@ -329,6 +327,49 @@
                     alert("Impossible de se connecter à Google Sheets. Vérifiez votre URL API.");
                 }
             }
+
+            // --- SAUVEGARDE MANUELLE GLOBALE ---
+            document.getElementById('btn-save-all').addEventListener('click', () => {
+                if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI" || API_URL === "") {
+                    alert("Veuillez d'abord configurer l'URL de votre API Google Apps Script au début du code.");
+                    return;
+                }
+
+                setSyncStatus('syncing');
+                const cards = document.querySelectorAll('article');
+                let promises = [];
+
+                // Parcourt chaque carte pour récupérer ses données actuelles depuis le HTML
+                cards.forEach(card => {
+                    const dataToSend = {
+                        id: card.dataset.id,
+                        mois: card.querySelector('.js-input-month').value,
+                        client: card.querySelector('.js-input-client').value,
+                        objectif: parseInt(card.querySelector('.js-input-target').value) || 30,
+                        terminees: parseInt(card.querySelector('.js-val-done').textContent) || 0
+                    };
+
+                    // Envoi des requêtes POST pour chaque carte
+                    const request = fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify(dataToSend)
+                    }).then(res => res.json());
+
+                    promises.push(request);
+                });
+
+                // Attend que toutes les sauvegardes soient terminées pour afficher "À jour"
+                Promise.all(promises)
+                    .then(() => {
+                        setSyncStatus('success');
+                        console.log("Sauvegarde manuelle terminée avec succès.");
+                    })
+                    .catch(err => {
+                        setSyncStatus('error');
+                        console.error("Erreur lors de la sauvegarde manuelle :", err);
+                    });
+            });
 
             // --- INITIALISATION ---
             loadDataFromCloud();
