@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard CEO - Adasoft</title>
     
-    <!-- Google Fonts: Inter pour un look SaaS très propre -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -19,16 +19,14 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
                         app: {
-                            bg: '#0D0B0A',      // Noir chaud très profond
-                            card: '#141110',    // Gris chaud foncé pour les cartes
-                            border: '#2A2422',  // Bordures subtilement chaudes
-                            muted: '#A39995',   // Texte secondaire
-                            accent: '#E55812',  // Orange cuivré inspiré de votre logo
+                            bg: '#0D0B0A',      
+                            card: '#141110',    
+                            border: '#2A2422',  
+                            muted: '#A39995',   
+                            accent: '#E55812',  
                         }
                     }
                 }
@@ -40,14 +38,11 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Animation de chargement douce pour les cartes */
         @keyframes fade-in-up {
             0% { opacity: 0; transform: translateY(15px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-        .animate-card {
-            animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .animate-card { animation: fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
 <body class="bg-app-bg text-white min-h-screen w-full overflow-x-hidden antialiased selection:bg-app-accent selection:text-white pb-16">
@@ -55,53 +50,52 @@
     <!-- Header Global -->
     <nav class="w-full border-b border-app-border bg-app-bg/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
         <div class="flex items-center gap-3">
-            <!-- Logo Adasoft (Icône vectorielle custom) -->
             <div class="w-9 h-9 bg-gradient-to-br from-[#FF8C42] to-app-accent rounded-xl flex items-center justify-center text-white shadow-[0_0_15px_rgba(229,88,18,0.4)]">
                 <svg viewBox="0 0 100 100" class="w-5 h-5">
-                    <!-- Arche du logo -->
                     <path d="M 22 75 C 35 20, 65 20, 78 75" stroke="currentColor" stroke-width="16" stroke-linecap="round" fill="none" />
-                    <!-- Point central -->
                     <circle cx="50" cy="72" r="9" fill="currentColor" />
                 </svg>
             </div>
             <span class="text-xl font-semibold tracking-tight">Adasoft</span>
         </div>
         
-        <!-- Bouton Nouveau Client -->
-        <button id="btn-add-client" class="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition-colors shadow-lg active:scale-95">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            Nouveau Dashboard
-        </button>
+        <div class="flex items-center gap-4">
+            <!-- Indicateur de synchronisation Cloud -->
+            <div id="sync-status" class="text-xs font-medium text-app-muted flex items-center gap-2 px-3 py-1.5 rounded-full bg-app-card border border-app-border/50">
+                <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" id="sync-dot"></div>
+                <span id="sync-text">Connexion...</span>
+            </div>
+
+            <!-- Bouton Nouveau Client -->
+            <button id="btn-add-client" class="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-gray-200 transition-colors shadow-lg active:scale-95">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Nouveau Dashboard
+            </button>
+        </div>
     </nav>
 
-    <!-- Container Principal (Grille pour plusieurs clients) -->
+    <!-- Container Principal -->
     <main class="w-full max-w-[1600px] mx-auto p-6 md:p-8">
         <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             <!-- Les cartes générées apparaîtront ici -->
         </div>
     </main>
 
-    <!-- MODÈLE CACHÉ (Template) POUR GÉNÉRER LES CARTES -->
+    <!-- MODÈLE CACHÉ (Template) -->
     <template id="card-template">
-        <!-- Carte individuelle -->
         <article class="w-full p-8 bg-app-card rounded-[2rem] border border-app-border shadow-[0_10px_50px_rgba(0,0,0,0.5)] relative animate-card opacity-0">
-            
-            <!-- Effet de lueur subtil (mis à jour avec la nouvelle couleur) -->
             <div class="absolute -top-20 -left-20 w-40 h-40 bg-app-accent/15 rounded-full blur-[64px] pointer-events-none"></div>
 
-            <!-- En-tête de la carte -->
             <header class="flex justify-between items-start mb-12">
                 <div class="flex flex-col gap-1 w-full mr-4">
                     <input type="text" value="" placeholder="NOM DU CLIENT" class="js-input-client text-app-muted text-xs font-semibold tracking-widest uppercase bg-transparent border-b border-transparent hover:border-app-border focus:border-app-accent focus:outline-none transition-colors w-full pb-1">
-                    <input type="text" value="Avril 2026" placeholder="Mois" class="text-xl font-medium tracking-tight bg-transparent border-b border-transparent hover:border-app-border focus:border-app-accent focus:outline-none transition-colors w-full pb-1">
+                    <input type="text" value="Avril 2026" placeholder="Mois" class="js-input-month text-xl font-medium tracking-tight bg-transparent border-b border-transparent hover:border-app-border focus:border-app-accent focus:outline-none transition-colors w-full pb-1">
                 </div>
-                <!-- Bouton de suppression explicite -->
-                <button class="js-btn-delete w-10 h-10 rounded-full bg-app-bg border border-app-border flex items-center justify-center shadow-inner shrink-0 transition-all text-app-muted hover:text-red-500 hover:bg-red-500/10 hover:border-red-500/50 cursor-pointer" title="Supprimer ce dashboard">
+                <button class="js-btn-delete w-10 h-10 rounded-full bg-app-bg border border-app-border flex items-center justify-center shadow-inner shrink-0 transition-all text-app-muted hover:text-red-500 hover:bg-red-500/10 hover:border-red-500/50 cursor-pointer" title="Masquer ce dashboard">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
             </header>
 
-            <!-- KPI Principal : Affiches Réalisées -->
             <section class="mb-12">
                 <h2 class="text-app-muted text-sm font-medium mb-3">Affiches terminées</h2>
                 <div class="flex items-center gap-6">
@@ -117,7 +111,6 @@
                 </div>
             </section>
 
-            <!-- Barre de Progression & Objectif -->
             <section class="mb-10">
                 <div class="flex justify-between items-end mb-3">
                     <div class="flex items-center gap-2">
@@ -137,10 +130,8 @@
                 </div>
             </section>
 
-            <!-- Séparateur -->
             <div class="h-px w-full bg-gradient-to-r from-transparent via-app-border to-transparent mb-8"></div>
 
-            <!-- Widget : Affiches Restantes -->
             <section class="flex items-center justify-between p-5 bg-app-bg/50 rounded-2xl border border-app-border/40 backdrop-blur-sm group hover:border-app-border transition-colors">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full border border-app-border bg-app-card flex items-center justify-center text-app-muted group-hover:text-white transition-colors">
@@ -156,22 +147,53 @@
     </template>
 
     <script>
+        // =========================================================================
+        // 🚨 ATTENTION : COLLEZ VOTRE URL MAGIQUE GOOGLE APPS SCRIPT ICI
+        // =========================================================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbxrHNApsIPcjh-dyadssqx-ET29YXeAVK7HU6Zoygs2GqIqdS_cDnwWjw3rmAIwKuyg/exec"; 
+        
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialisation globale des icônes
             lucide.createIcons();
-
             const container = document.getElementById('cards-container');
             const template = document.getElementById('card-template');
-            const btnAddClient = document.getElementById('btn-add-client');
+            
+            // --- GESTION DE L'INTERFACE DE SYNCHRONISATION ---
+            const syncText = document.getElementById('sync-text');
+            const syncDot = document.getElementById('sync-dot');
 
-            // Fonction maîtresse pour créer un dashboard indépendant
-            function createClientDashboard(initialClientName = "", initialDone = 0, initialTarget = 30) {
-                // 1. Cloner le modèle HTML
+            function setSyncStatus(status) {
+                if (status === 'syncing') {
+                    syncText.textContent = 'Sauvegarde...';
+                    syncDot.className = 'w-2 h-2 rounded-full bg-yellow-500 animate-pulse';
+                } else if (status === 'success') {
+                    syncText.textContent = 'À jour';
+                    syncDot.className = 'w-2 h-2 rounded-full bg-green-500';
+                } else if (status === 'error') {
+                    syncText.textContent = 'Hors ligne';
+                    syncDot.className = 'w-2 h-2 rounded-full bg-red-500';
+                }
+            }
+
+            // Utilitaires : Empêcher d'envoyer 10 requêtes si on clique vite
+            function debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+
+            // --- FONCTION MAÎTRESSE : CRÉATION D'UNE CARTE ---
+            function createClientDashboard(initialId = "", initialClientName = "", initialDone = 0, initialTarget = 30, initialMonth = "Avril 2026") {
                 const clone = template.content.cloneNode(true);
                 const card = clone.querySelector('article');
                 
-                // 2. Cibler les éléments de cette carte spécifique (grâce aux classes "js-...")
+                // Générer un ID unique si c'est une nouvelle carte
+                const cardId = initialId || 'CLI-' + new Date().getTime();
+                card.dataset.id = cardId;
+
                 const inputClient = card.querySelector('.js-input-client');
+                const inputMonth = card.querySelector('.js-input-month');
                 const inputTarget = card.querySelector('.js-input-target');
                 const valDone = card.querySelector('.js-val-done');
                 const valRemaining = card.querySelector('.js-val-remaining');
@@ -182,15 +204,13 @@
                 const btnSub = card.querySelector('.js-btn-sub');
                 const btnDelete = card.querySelector('.js-btn-delete');
 
-                // 3. Variables d'état propres à cette carte
-                let targetPosters = initialTarget;
-                let donePosters = initialDone;
+                let targetPosters = parseInt(initialTarget) || 30;
+                let donePosters = parseInt(initialDone) || 0;
                 
-                // Assigner les valeurs initiales
                 inputClient.value = initialClientName;
+                inputMonth.value = initialMonth;
                 inputTarget.value = targetPosters;
 
-                // 4. Fonction de mise à jour visuelle (uniquement pour cette carte)
                 function updateUI() {
                     const remaining = Math.max(0, targetPosters - donePosters);
                     let percent = targetPosters > 0 ? Math.round((donePosters / targetPosters) * 100) : 0;
@@ -202,53 +222,118 @@
                     progressFill.style.width = percent + '%';
                 }
 
-                // 5. Gestion des événements de cette carte
+                // ☁️ --- SAUVEGARDE DANS GOOGLE SHEETS --- ☁️
+                const saveToCloud = debounce(() => {
+                    if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI") return; // On ne fait rien si l'URL n'est pas mise
+                    
+                    setSyncStatus('syncing');
+
+                    const dataToSend = {
+                        id: cardId,
+                        mois: inputMonth.value,
+                        client: inputClient.value,
+                        objectif: targetPosters,
+                        terminees: donePosters
+                    };
+
+                    // Requête POST vers Google Apps Script
+                    fetch(API_URL, {
+                        method: 'POST',
+                        // text/plain est une astuce pour éviter les erreurs de sécurité CORS du navigateur
+                        headers: { 'Content-Type': 'text/plain' }, 
+                        body: JSON.stringify(dataToSend)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Sauvegarde réussie :", data);
+                        setSyncStatus('success');
+                    })
+                    .catch(error => {
+                        console.error("Erreur de sauvegarde :", error);
+                        setSyncStatus('error');
+                    });
+                }, 1000); // Attend 1 seconde après la dernière action avant de sauvegarder
+
+                // --- GESTION DES ÉVÉNEMENTS (DÉCLENCHENT LA SAUVEGARDE) ---
                 inputTarget.addEventListener('input', (e) => {
                     let newVal = parseInt(e.target.value);
                     targetPosters = (!isNaN(newVal) && newVal > 0) ? newVal : 1;
                     updateUI();
+                    saveToCloud();
                 });
+                
+                inputClient.addEventListener('input', saveToCloud);
+                inputMonth.addEventListener('input', saveToCloud);
 
                 btnAdd.addEventListener('click', () => {
                     donePosters++;
                     updateUI();
+                    saveToCloud();
                 });
 
                 btnSub.addEventListener('click', () => {
                     if (donePosters > 0) {
                         donePosters--;
                         updateUI();
+                        saveToCloud();
                     }
                 });
 
                 btnDelete.addEventListener('click', () => {
-                    // Animation de disparition douce avant suppression
+                    // Supprime la carte visuellement
                     card.style.opacity = '0';
                     card.style.transform = 'scale(0.95)';
                     card.style.transition = 'all 0.3s ease-out';
                     setTimeout(() => card.remove(), 300);
+                    // Note : L'API ne gère pas encore la suppression définitive dans le Sheet. 
+                    // Il faudra supprimer la ligne manuellement dans Google Sheets.
                 });
 
-                // 6. Ajouter la carte à la page et configurer le visuel
                 container.appendChild(clone);
-                lucide.createIcons(); // Recréer les icônes SVG pour la nouvelle carte
-                
-                // Mettre à jour l'UI avec un léger délai pour que la transition CSS de la barre fonctionne
+                lucide.createIcons();
                 setTimeout(updateUI, 50);
 
-                // Focus sur le nom du client si c'est une nouvelle carte vierge
                 if (initialClientName === "") {
                     setTimeout(() => inputClient.focus(), 100);
                 }
             }
 
-            // --- INITIALISATION AU DÉMARRAGE ---
+            // ☁️ --- CHARGEMENT DEPUIS GOOGLE SHEETS (AU DÉMARRAGE) --- ☁️
+            async function loadDataFromCloud() {
+                if (API_URL === "VOTRE_URL_APPLICATION_WEB_ICI" || API_URL === "") {
+                    setSyncStatus('error');
+                    // Mode Demo si l'URL n'est pas encore configurée
+                    createClientDashboard("", "Client Démo 1", 12, 30);
+                    return;
+                }
+
+                try {
+                    setSyncStatus('syncing');
+                    const response = await fetch(API_URL);
+                    const datas = await response.json();
+                    
+                    if (datas.length === 0) {
+                        // Base de données vide, on crée une carte vierge
+                        createClientDashboard();
+                    } else {
+                        // On recrée une carte pour chaque ligne du Google Sheet
+                        datas.forEach(row => {
+                            createClientDashboard(row.id, row.client, row.terminees, row.objectif, row.mois);
+                        });
+                    }
+                    setSyncStatus('success');
+
+                } catch (error) {
+                    console.error("Erreur de chargement des données :", error);
+                    setSyncStatus('error');
+                    alert("Impossible de se connecter à Google Sheets. Vérifiez votre URL API.");
+                }
+            }
+
+            // --- INITIALISATION ---
+            loadDataFromCloud();
             
-            // Créer une première carte d'exemple
-            createClientDashboard("Studio Alpha", 12, 30);
-            
-            // Event listener du bouton global "Nouveau Dashboard"
-            btnAddClient.addEventListener('click', () => {
+            document.getElementById('btn-add-client').addEventListener('click', () => {
                 createClientDashboard();
             });
         });
